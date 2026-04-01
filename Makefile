@@ -13,8 +13,13 @@ LIBS = $(LIBS) -lnetcdf -lcurl
 # IBAMR_BUILD_DIR = /nas02/apps/ibamr-2016-11/OFED-1.5.2/sfw/ibamr/ibamr-objs-opt
 #
 #g DW (MODULE 2018-03  <-- March 2018 Module Install)
-IBAMR_SRC_DIR = /home/sc7825/IBAMR-test/IBAMR
-IBAMR_BUILD_DIR  =/home/sc7825/IBAMR-test/ibamr-objs-opt
+# IBAMR_SRC_DIR = /home/sc7825/IBAMR-test/IBAMR
+# IBAMR_BUILD_DIR = /home/sc7825/IBAMR-test/ibamr-objs-opt
+#
+# Torch (IBAMR 0.8.0 built from singularity sqf source)
+# Run singularity/build-ibamr.bash once to populate IBAMR_BUILD_DIR
+IBAMR_SRC_DIR = /ext3/sfw/ibamr/IBAMR-0.8.0
+IBAMR_BUILD_DIR = /home/sc7825/ibamr-build
 #
 
 ######################################################################
