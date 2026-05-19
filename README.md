@@ -17,7 +17,7 @@ Immersed boundary simulation of a 3D rotating cylinder (rotobot) in viscous flow
 ### 1 — Clone the repo
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Eleven7825/3dRotatingCylinder.git
 cd 3dRotatingCylinder
 ```
 
