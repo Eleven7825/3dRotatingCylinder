@@ -6,6 +6,7 @@ generated from the latter.
 
 ```
 cases/<case-name>/
+    README.md          what this case is and why      (hand-written, committed)
     input3d            flow / solver parameters      (hand-edited, committed)
     geometry.json      body parameters               (hand-edited, committed)
     cylinder3d.vertex  IB point cloud                (generated, committed via LFS)
@@ -37,10 +38,17 @@ python3 setup_run.py my-new-case
 
 ## Existing cases
 
+Each case has its own `README.md` with the full setup; the summary:
+
 | Case | Body | Points | Notes |
 |------|------|--------|-------|
-| `faster_nofin` | bare cylinder, R=3.17, L=25.5 | 3,296,640 | no end caps, no fins. Oscillation f=0.6, open top BC, gravity on from t=0, END_TIME=30 |
-| `endcaps` | 2 end caps, R=7.0 | 3,359,238 | no internal fins. Oscillation f=0.3333, closed top BC, gravity from t=3.0 |
+| [`faster_nofin`](faster_nofin/README.md) | bare cylinder, R=3.17, L=25.5 | 3,296,640 | baseline. No end caps, no fins. Oscillation f=0.6, open top BC, gravity from t=0 |
+| [`endcaps`](endcaps/README.md) | 2 end caps, R=7.0 | 3,359,238 | no internal fins. Oscillation f=0.3333, closed top BC, gravity from t=3.0 |
+
+Both run at Re = ρUD/μ ≈ 634 and oscillate translationally (`U·cos(2πft)`) — the
+body is never actually rotated, despite the repository name. Note that the two
+cases differ in frequency, gravity and boundary conditions as well as geometry,
+so they are not a controlled comparison as they stand.
 
 ## Keeping geometry.json and input3d consistent
 
