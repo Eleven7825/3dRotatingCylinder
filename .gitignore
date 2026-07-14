@@ -1,0 +1,20 @@
+# Run outputs
+runs/
+viz_cylinder3d/
+restart_IB3d/
+cylinder_dump/
+Dump--Cylinder/
+IB3d_cylinder3d.log
+*.out
+*.err
+
+# Build artifacts
+build/
+*.o
+*.d
+main3d
+
+# Container image (built locally, see README)
+singularity/*.sif
+
+__pycache__/
