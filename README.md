@@ -53,21 +53,30 @@ Runs `cmake` + `make` inside the container. Binary lands at `build/main3d`.
 
 ### 4 — Set up and submit a run
 
+Runs are defined by **cases**. List them by running with no arguments:
+
 ```bash
 python3 setup_run.py
+#   endcaps
+#   faster_nofin
+
+python3 setup_run.py faster_nofin
 ```
 
 The script:
-1. Creates a timestamped run folder in the project root (e.g., `2026-05-19_10-30-00/`)
-2. Generates the cylinder surface mesh (`Cylinder.py`)
-3. Copies input files into the run folder
-4. Submits the SLURM job
+1. Verifies the case's `cylinder3d.vertex` still matches its `geometry.json`
+2. Creates a timestamped run folder, `runs/<case>_YYYY-MM-DD_HH-MM-SS/`
+3. Copies the case's `input3d`, `cylinder3d.vertex` and `indices` into it
+4. Archives the sources + case definition into `archive/` for provenance
+5. Submits the SLURM job
+
+Use `--no-submit` to stage the run folder without submitting.
 
 Monitor the job:
 
 ```bash
 squeue -u $USER
-tail -f 2026-05-19_10-30-00/ibamr-rotating-cylinder-<jobid>.out
+tail -f runs/faster_nofin_2026-07-14_11-48-15/ibamr-rotating-cylinder-<jobid>.out
 ```
 
 Cancel if needed:
@@ -95,7 +104,9 @@ Open `viz_cylinder3d/` in [VisIt](https://visit-dav.github.io/visit-website/).
 For quick tests or debugging, run directly in the container on the login node:
 
 ```bash
-bash singularity/run-IBAMR-torch.bash mpirun -np 4 ./build/main3d input3d
+python3 setup_run.py faster_nofin --no-submit   # stage runs/<case>_<stamp>/
+cd runs/<case>_<stamp>
+bash ../../singularity/run-IBAMR-torch.bash mpirun -np 4 ../../build/main3d input3d
 ```
 
 Drop into an interactive shell inside the container:
@@ -120,17 +131,45 @@ sbatch --chdir=<run-folder> \
 
 ---
 
-## File overview
+## Layout
+
+```
+cases/                    one directory per simulation case — see cases/README.md
+  faster_nofin/           input3d + geometry.json + cylinder3d.vertex + indices
+  endcaps/
+tools/
+  generate_vertex.py      builds a case's point cloud from its geometry.json
+runs/                     staged/submitted runs (gitignored)
+*.C, *.h                  solver sources — built by CMakeLists.txt / Makefile
+singularity/              container definition and cluster scripts
+setup_run.py              stage a case into runs/ and submit to SLURM
+```
+
+A **case** is a matched pair: `input3d` (flow/solver parameters) and
+`geometry.json` (body parameters). `cylinder3d.vertex` and `indices` are
+*generated* from `geometry.json` and must never be hand-edited — regenerate with
+
+```bash
+python3 tools/generate_vertex.py cases/<case-name>
+```
+
+`setup_run.py` re-verifies this before every submission, so a vertex file can't
+silently drift out of sync with the geometry it claims to come from.
 
 | File | Purpose |
 |------|---------|
 | `example.C` | Main simulation driver |
-| `input3d` | Simulation parameters (grid, timestep, viscosity, etc.) |
-| `Cylinder.py` | Generates the cylinder surface vertex file |
-| `cylinder3d.vertex` | Pre-generated vertex file (used as fallback) |
+| `cases/<case>/input3d` | Flow/solver parameters (grid, timestep, viscosity, BCs) |
+| `cases/<case>/geometry.json` | Body parameters (radius, length, end caps, fins) |
+| `cases/<case>/cylinder3d.vertex` | IB point cloud (generated; stored in git LFS) |
+| `cases/<case>/indices` | End-cap / fin point markers (generated) |
+| `tools/generate_vertex.py` | Generate a case's vertex + indices from `geometry.json` |
 | `CMakeLists.txt` | CMake build definition |
 | `singularity/ibamr.def` | Container definition (Ubuntu 22.04 + autoibamr) |
 | `singularity/build-container.sh` | Build the `.sif` container image |
 | `singularity/run-IBAMR-torch.bash` | Run any command inside the container |
 | `singularity/run-simulation.slurm` | SLURM job script |
-| `setup_run.py` | Create run folder and submit to SLURM |
+| `setup_run.py` | Stage a case into `runs/` and submit to SLURM |
+
+Vertex files are ~95 MB each and are tracked with **git LFS** (`*.vertex`).
+Make sure `git lfs install` has been run before cloning or pushing.
