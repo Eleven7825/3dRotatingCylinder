@@ -7,7 +7,7 @@ Immersed boundary simulation of a 3D rotating cylinder (rotobot) in viscous flow
 ## Prerequisites
 
 - NYU **Torch** HPC cluster (or any system with Apptainer ≥ 1.2 and SLURM)
-- Git, Python 3 — both available on Torch login nodes
+- Git, Python 3 with numpy — load via `module load anaconda3/2025.06` on Torch
 - No local IBAMR installation needed — everything runs inside a container
 
 ---
@@ -56,6 +56,8 @@ Runs `cmake` + `make` inside the container. Binary lands at `build/main3d`.
 Runs are defined by **cases**. List them by running with no arguments:
 
 ```bash
+module load anaconda3/2025.06   # needed for numpy (generate_vertex.py)
+
 python3 setup_run.py
 #   endcaps
 #   faster_nofin
@@ -104,6 +106,7 @@ Open `viz_cylinder3d/` in [VisIt](https://visit-dav.github.io/visit-website/).
 For quick tests or debugging, run directly in the container on the login node:
 
 ```bash
+module load anaconda3/2025.06
 python3 setup_run.py faster_nofin --no-submit   # stage runs/<case>_<stamp>/
 cd runs/<case>_<stamp>
 bash ../../singularity/run-IBAMR-torch.bash mpirun -np 4 ../../build/main3d input3d
