@@ -23,6 +23,7 @@ geometry.json before submission, so a stale mesh cannot silently be run.
 """
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -31,7 +32,14 @@ from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent
 CASES_DIR = PROJECT_DIR / "cases"
-RUNS_DIR = PROJECT_DIR / "runs"
+
+# Compute nodes on Torch cannot access /archive.  Set IBAMR_SCRATCH_DIR to a
+# path on /scratch so the SIF, executable, and run output land somewhere the
+# job can reach.  Defaults to PROJECT_DIR when running locally or on a system
+# where the project dir is compute-accessible.
+_scratch_env = os.environ.get("IBAMR_SCRATCH_DIR", "")
+SCRATCH_DIR = Path(_scratch_env).resolve() if _scratch_env else PROJECT_DIR
+RUNS_DIR = SCRATCH_DIR / "runs"
 
 # Source files snapshotted into archive/ so a run records exactly what produced it.
 SOURCE_FILES = [
@@ -148,8 +156,8 @@ def main():
 
     # --- 4. Submit -----------------------------------------------------------
     slurm_script = PROJECT_DIR / "singularity" / "run-simulation.slurm"
-    executable = PROJECT_DIR / "build" / "main3d"
-    sif = PROJECT_DIR / "singularity" / "ibamr.sif"
+    executable = SCRATCH_DIR / "build" / "main3d"
+    sif = SCRATCH_DIR / "singularity" / "ibamr.sif"
 
     if args.no_submit:
         print("\n  [4/4] --no-submit: run folder staged, not submitted.")
@@ -169,8 +177,9 @@ def main():
         [
             "sbatch",
             f"--chdir={run_dir}",
-            f"--export=ALL,IBAMR_PROJECT_DIR={PROJECT_DIR},IBAMR_SIF={sif},"
-            f"IBAMR_EXECUTABLE={executable}",
+            f"--export=ALL,IBAMR_PROJECT_DIR={PROJECT_DIR},"
+            f"IBAMR_SCRATCH_DIR={SCRATCH_DIR},"
+            f"IBAMR_SIF={sif},IBAMR_EXECUTABLE={executable}",
             str(slurm_script),
             "input3d",
         ],

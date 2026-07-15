@@ -43,6 +43,8 @@ if [[ -z "${IBAMR_PROJECT_DIR:-}" ]]; then
     exit 1
 fi
 PROJECT_DIR="${IBAMR_PROJECT_DIR}"
+# SCRATCH_DIR hosts the SIF and executable (compute nodes cannot access /archive)
+SCRATCH_DIR="${IBAMR_SCRATCH_DIR:-${IBAMR_PROJECT_DIR}}"
 SIF="${IBAMR_SIF}"
 EXECUTABLE="${IBAMR_EXECUTABLE}"
 
@@ -63,6 +65,6 @@ echo ""
 [[ "${PWD}" == "${PROJECT_DIR}" ]] || true   # no-op; cwd is already correct
 
 srun apptainer exec \
-    --bind "${PROJECT_DIR}":"${PROJECT_DIR}" \
+    --bind "${SCRATCH_DIR}":"${SCRATCH_DIR}" \
     "${SIF}" \
     "${EXECUTABLE}" "${INPUT_FILE}" ${RESTART_ARGS}

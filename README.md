@@ -53,6 +53,22 @@ Runs `cmake` + `make` inside the container. Binary lands at `build/main3d`.
 
 ### 4 — Set up and submit a run
 
+> **Torch note:** compute nodes cannot access `/archive`.  Set `IBAMR_SCRATCH_DIR`
+> to a path on `/scratch` so the SIF, executable, and run output land where the
+> job can reach them.  Do this **once** per shell session (or add it to `~/.bashrc`):
+>
+> ```bash
+> export IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder
+> ```
+>
+> Then copy the built artifacts there the first time (or after a rebuild):
+>
+> ```bash
+> mkdir -p $IBAMR_SCRATCH_DIR/{singularity,build,runs}
+> cp singularity/ibamr.sif  $IBAMR_SCRATCH_DIR/singularity/
+> cp build/main3d            $IBAMR_SCRATCH_DIR/build/
+> ```
+
 Runs are defined by **cases**. List them by running with no arguments:
 
 ```bash
@@ -62,7 +78,7 @@ python3 setup_run.py
 #   endcaps
 #   faster_nofin
 
-python3 setup_run.py faster_nofin
+IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder python3 setup_run.py faster_nofin
 ```
 
 The script:
@@ -78,7 +94,7 @@ Monitor the job:
 
 ```bash
 squeue -u $USER
-tail -f runs/faster_nofin_2026-07-14_11-48-15/ibamr-rotating-cylinder-<jobid>.out
+tail -f $IBAMR_SCRATCH_DIR/runs/faster_nofin_<stamp>/ibamr-rotating-cylinder-<jobid>.out
 ```
 
 Cancel if needed:
@@ -107,9 +123,11 @@ For quick tests or debugging, run directly in the container on the login node:
 
 ```bash
 module load anaconda3/2025.06
-python3 setup_run.py faster_nofin --no-submit   # stage runs/<case>_<stamp>/
-cd runs/<case>_<stamp>
-bash ../../singularity/run-IBAMR-torch.bash mpirun -np 4 ../../build/main3d input3d
+export IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder
+IBAMR_SCRATCH_DIR=$IBAMR_SCRATCH_DIR python3 setup_run.py faster_nofin --no-submit
+cd $IBAMR_SCRATCH_DIR/runs/<case>_<stamp>
+bash /archive/$USER/3dRotatingCylinder/singularity/run-IBAMR-torch.bash \
+     mpirun -np 4 $IBAMR_SCRATCH_DIR/build/main3d input3d
 ```
 
 Drop into an interactive shell inside the container:
