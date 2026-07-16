@@ -60,11 +60,9 @@ echo "  Input file:  ${INPUT_FILE}"
 echo "  Container:   ${SIF}"
 echo ""
 
-# Working directory is set by --chdir in sbatch (run folder created by setup_run.py)
-# Fall back to PROJECT_DIR if run directly without the wrapper
-[[ "${PWD}" == "${PROJECT_DIR}" ]] || true   # no-op; cwd is already correct
-
-srun apptainer exec \
+# Use the container's own mpirun rather than srun+apptainer to avoid
+# OpenMPI/SLURM-PMI version mismatches that cause MPI_Init to hang.
+apptainer exec \
     --bind "${SCRATCH_DIR}":"${SCRATCH_DIR}" \
     "${SIF}" \
-    "${EXECUTABLE}" "${INPUT_FILE}" ${RESTART_ARGS}
+    mpirun -np "${SLURM_NTASKS}" "${EXECUTABLE}" "${INPUT_FILE}" ${RESTART_ARGS}
