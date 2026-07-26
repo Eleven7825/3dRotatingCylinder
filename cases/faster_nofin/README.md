@@ -53,6 +53,33 @@ supplies the net body force directly.
 > records the `use_disk = 0` that actually produced it, and `indices` is
 > regenerated correctly as `8079 / 3296639`.
 
+## Run history
+
+### Job 14497777 — 2026-07-22 (partial, domain exit)
+
+128 tasks, 256 GB, `cs` partition. Ran t = 0 → 21.55 (43,099 of ~60,000 timesteps,
+~14.5 hours wall time) before the IB structure reached the y lower boundary
+(y_lower = −72, cylinder center at y ≈ −67.5, radius 3.17 → IB points within
+1.3 units of the wall, insufficient ghost cells for the 4-point kernel).
+
+**Glide angle from `Cylinder_COM_coordinates_struct_no_0`:**
+
+| Phase | t range | Glide angle |
+|-------|---------|-------------|
+| Early | 2–3 | 60.7° |
+| Mid | 10–12 | 41–42° |
+| Late | 19–20 | 34.6° |
+| Final snapshot (last 10%) | ~19.4–21.5 | 33.0° |
+| Overall average (t=0→21.55) | — | 46.6° |
+
+The angle is still decreasing at run end — steady glide not yet reached.
+Total displacement: Δx = +63.9, Δy = −67.5.
+
+**Next step:** expand domain (Ly: 90 → 150, Lx: 100 → 150, Nx/Ny scaled to
+keep coarse dx = 1.0) to allow the full t = 30 run without domain exit.
+
+---
+
 ## Regenerate
 
 ```bash
