@@ -33,6 +33,8 @@ Imported from `/media/shiyi/vast/3dRotatingCylinder/Jun22_faster_nofin`.
 
 Reynolds number based on diameter, ρUD/μ ≈ **634**.
 Keulegan–Carpenter number U/(fD) ≈ **0.26**.
+Buoyancy parameter δ = **0.011**.
+Rotation frequency f = **0.6**.
 
 ## Notes
 
