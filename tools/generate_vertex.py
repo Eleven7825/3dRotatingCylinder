@@ -21,6 +21,15 @@ Points are laid down layer by layer along z. Every layer is a disc of radius `a`
                               - any layers in between are fins,   a = disk_radius
                             all other layers use a = Radius
 
+Optional mid-fins (independent of use_disk / end caps):
+
+    fins           list of z-fractions in [0, 1] where extra fins are placed
+                   e.g. [0.5] places a single fin at the axial midpoint
+    fin_radius     radius of those fins (required when fins is non-empty)
+
+This allows fins without end caps (use_disk = 0 + fins list) or additional
+fins beyond those produced by total_disks.
+
 The cloud is recentered on its own center of mass before being written.
 
 indices
@@ -83,12 +92,22 @@ def build(geom: dict):
     disk_radius = c["disk_radius"]
     X_com, Y_com, Z_com = c["X_com"], c["Y_com"], c["Z_com"]
 
-    # Loop bounds are sized off the widest possible disc so every layer fits.
-    num_pts_x = math.ceil(2 * endCap_radius / dx)
-    num_pts_y = math.ceil(2 * endCap_radius / dy)
     num_pts_z = math.ceil(c["L"] / dz)
 
-    endcaps, fins = marked_layers(c["use_disk"], c["total_disks"], num_pts_z)
+    endcaps, disk_fins = marked_layers(c["use_disk"], c["total_disks"], num_pts_z)
+
+    # Optional explicit mid-fins: list of z-fractions → 1-based layer indices.
+    mid_fin_fracs = c.get("fins", [])
+    mid_fin_radius = c.get("fin_radius", Radius)
+    mid_fins = {int(round(1 + f * (num_pts_z - 1))) for f in mid_fin_fracs}
+
+    # Widest radius across all marked layers determines loop bounds.
+    all_radii = ([endCap_radius] * len(endcaps) +
+                 [disk_radius]   * len(disk_fins) +
+                 [mid_fin_radius] * len(mid_fins))
+    max_radius = max([Radius] + all_radii)
+    num_pts_x = math.ceil(2 * max_radius / dx)
+    num_pts_y = math.ceil(2 * max_radius / dy)
 
     X, Y, Z = [], [], []
     idx = 0
@@ -99,8 +118,10 @@ def build(geom: dict):
 
         if k in endcaps:
             a = endCap_radius
-        elif k in fins:
+        elif k in disk_fins:
             a = disk_radius
+        elif k in mid_fins:
+            a = mid_fin_radius
         else:
             a = Radius
 
@@ -118,7 +139,8 @@ def build(geom: dict):
         Z.append(np.full(xs.shape, z))
         idx += xs.size
 
-        if k in endcaps or k in fins or k == 1 or k == num_pts_z:
+        all_marked = set(endcaps) | set(disk_fins) | mid_fins
+        if k in all_marked or k == 1 or k == num_pts_z:
             index_marks.append(idx - 1)
 
     X = np.concatenate(X)
@@ -133,7 +155,7 @@ def build(geom: dict):
         "dx": (dx, dy, dz),
         "layers": num_pts_z,
         "endcaps": endcaps,
-        "fins": fins,
+        "fins": sorted(disk_fins) + sorted(mid_fins),
         "npoints": X.size,
     }
     return X, Y, Z, sorted(set(index_marks)), info
