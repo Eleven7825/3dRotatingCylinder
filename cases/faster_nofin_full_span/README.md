@@ -1,4 +1,4 @@
-# Case: `faster_nofin_large_span`
+# Case: `faster_nofin_full_span`
 
 **Bare cylinder — full z-span, periodic z.** Same physics and enlarged x/y domain
 as [`faster_nofin_large`](../faster_nofin_large/README.md), but the cylinder length
@@ -36,7 +36,7 @@ Rotation frequency f = **0.6**.
 
 ## Comparison with parent cases
 
-| Parameter | `faster_nofin` | `faster_nofin_large` | `faster_nofin_large_span` |
+| Parameter | `faster_nofin` | `faster_nofin_large` | `faster_nofin_full_span` |
 |-----------|---------------|---------------------|--------------------------|
 | Lx | 100 | 150 | 150 |
 | Ly | 90 | 150 | 150 |
@@ -49,7 +49,7 @@ Rotation frequency f = **0.6**.
 ## Regenerate
 
 ```bash
-python3 tools/generate_vertex.py cases/faster_nofin_large_span          # rebuild mesh
-python3 tools/generate_vertex.py cases/faster_nofin_large_span --check  # verify
-IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder python3 setup_run.py faster_nofin_large_span
+python3 tools/generate_vertex.py cases/faster_nofin_full_span          # rebuild mesh
+python3 tools/generate_vertex.py cases/faster_nofin_full_span --check  # verify
+IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder python3 setup_run.py faster_nofin_full_span
 ```
