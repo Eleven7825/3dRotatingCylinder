@@ -1,0 +1,24 @@
+{
+  "description": "Full z-span cylinder with three fins (radius 2R = 6.34) at z=1/6, 1/2, 5/6. No end caps. Periodic z.",
+  "mesh": {
+    "Lx": 100.0,
+    "Ly": 45.0,
+    "Lz": 35.0,
+    "Nx": 1600,
+    "Ny": 720,
+    "Nz": 560
+  },
+  "cylinder": {
+    "X_com": 0.0,
+    "Y_com": 0.0,
+    "Z_com": 0.0,
+    "Radius": 3.17,
+    "L": 35.0,
+    "use_disk": 0,
+    "total_disks": 0,
+    "disk_radius": 3.17,
+    "endCap_radius": 6.34,
+    "fins": [0.16667, 0.5, 0.83333],
+    "fin_radius": 6.34
+  }
+}
