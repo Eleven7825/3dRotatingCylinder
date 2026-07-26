@@ -1,4 +1,4 @@
-# Case: `faster_nofin_midfin`
+# Case: `faster_midfin`
 
 **Cylinder with one central fin — full z-span, periodic z.** Same physics and
 enlarged x/y domain as [`faster_nofin_full_span`](../faster_nofin_full_span/README.md),
@@ -36,7 +36,7 @@ Rotation frequency f = **0.6**.
 
 ## Comparison with sibling cases
 
-| Parameter | `faster_nofin_full_span` | `faster_nofin_midfin` |
+| Parameter | `faster_nofin_full_span` | `faster_midfin` |
 |-----------|-------------------------|-----------------------|
 | Cylinder L | 35.0 | 35.0 |
 | z BC | periodic | periodic |
@@ -47,7 +47,7 @@ Rotation frequency f = **0.6**.
 ## Regenerate
 
 ```bash
-python3 tools/generate_vertex.py cases/faster_nofin_midfin          # rebuild mesh
-python3 tools/generate_vertex.py cases/faster_nofin_midfin --check  # verify
-IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder python3 setup_run.py faster_nofin_midfin
+python3 tools/generate_vertex.py cases/faster_midfin          # rebuild mesh
+python3 tools/generate_vertex.py cases/faster_midfin --check  # verify
+IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder python3 setup_run.py faster_midfin
 ```
