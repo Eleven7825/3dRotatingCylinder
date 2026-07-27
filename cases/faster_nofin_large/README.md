@@ -46,6 +46,30 @@ Keulegan–Carpenter number U/(fD) ≈ **0.26**.
 Buoyancy parameter δ = **0.011**.
 Rotation frequency f = **0.6**.
 
+## Results (job 14802446)
+
+**Completed successfully** — all 60,000 timesteps to t = 30 (15h wall-clock, 128 cores).
+
+![COM trajectory](trajectory.png)
+
+Final center of mass: **(92.94, −92.82, −0.35)** — well within the expanded domain.
+
+### Glide angle
+
+Angle of COM trajectory below horizontal (arctan |Δy / Δx|):
+
+| Phase | t range | Glide angle |
+|-------|---------|-------------|
+| Early | 2–3 | 64.8° |
+| Mid | 10–12 | 41.5° |
+| Late | 19–21 | 39.1° |
+| Final (last 10%) | 27–30 | 39.1° |
+| Overall avg | 2–30 | 42.4° |
+
+The trajectory settles to ~39° by t ≈ 20 and remains steady. Compare with
+`faster_nofin` (crashed at t = 21.5, final angle ~33° — measured over fewer
+cycles in the smaller domain).
+
 ## Domain comparison vs `faster_nofin`
 
 | Parameter | `faster_nofin` | `faster_nofin_large` |
