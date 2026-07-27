@@ -64,6 +64,8 @@ supplies the net body force directly.
 (y_lower = −72, cylinder center at y ≈ −67.5, radius 3.17 → IB points within
 1.3 units of the wall, insufficient ghost cells for the 4-point kernel).
 
+![COM trajectory](trajectory.png)
+
 **Glide angle from `Cylinder_COM_coordinates_struct_no_0`:**
 
 | Phase | t range | Glide angle |
