@@ -113,7 +113,24 @@ Output appears inside the run folder:
 | `cylinder_dump/` | Drag / force time series |
 | `Dump--Cylinder/` | Constraint IB output |
 
-Open `viz_cylinder3d/` in [VisIt](https://visit-dav.github.io/visit-website/).
+Open `viz_cylinder3d/` in [VisIt](https://visit-dav.github.io/visit-website/):
+
+1. Go to [ood.torch.hpc.nyu.edu](https://ood.torch.hpc.nyu.edu) and request an interactive session (e.g. a Desktop app) with enough resources for VisIt.
+2. Once the session opens, launch VisIt from a terminal in that session:
+   ```
+   /scratch/sc7825/software/visit/bin/visit
+   ```
+3. In the VisIt GUI, go to **File -> Restore Session...**, browse to the run's `viz_cylinder3d` directory, and click the `.session` file to load it.
+
+#### Test example
+
+To try it with an existing run, restore this session file:
+
+```
+/scratch/sc7825/3dRotatingCylinder/runs/faster_3fin_2026-07-27_00-38-02/viz_cylinder3d/visit.compoents.session
+```
+
+Note: the session's database paths are relative to the run's *parent* directory (one level above `viz_cylinder3d`), so if VisIt reports it can't find `dumps.visit`, `cd` into `faster_3fin_2026-07-27_00-38-02` before launching `visit`, or set that as VisIt's working/browse directory before restoring the session.
 
 ---
 
