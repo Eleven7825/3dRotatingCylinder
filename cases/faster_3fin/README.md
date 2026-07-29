@@ -42,6 +42,28 @@ Rotation frequency f = **0.6**.
 | `faster_2fin` | 2 | 1/4, 3/4 | 4,573,264 |
 | `faster_3fin` | 3 | 1/6, 1/2, 5/6 | 4,597,496 |
 
+## Results (job 14817768)
+
+**Running** — reached t = 29.07 / 30 as of plot generation; ~1.4h wall-clock remaining.
+
+![COM trajectory](trajectory.png)
+
+Center of mass at t = 29.07: **(67.19, −28.26, 0.00)**
+
+### Glide angle
+
+Angle of COM trajectory below horizontal (arctan |Δy / Δx|):
+
+| Phase | t range | Glide angle |
+|-------|---------|-------------|
+| Early | 2–3 | 48.2° |
+| Mid | 10–12 | 19.8° |
+| Late | 19–21 | 7.9° |
+| Final (last 10%) | 26.2–29.1 | 2.5° |
+| Overall avg | 2–29.1 | 17.1° |
+
+Three fins dramatically flatten the trajectory — the glide angle drops to ~2.5° by t ≈ 26, meaning the cylinder moves nearly horizontally. Compare with the no-fin case (`faster_nofin_large`) which settles at ~39°.
+
 ## Regenerate
 
 ```bash

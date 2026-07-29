@@ -46,6 +46,30 @@ Rotation frequency f = **0.6**.
 | z BC | wall | wall | **periodic** |
 | IB points | 3,296,640 | 3,296,640 | **4,524,800** |
 
+## Results (job 14817761)
+
+**Out of memory** — reached t = 22.88 / 30 (45,760 of ~60,000 timesteps, ~20.4h wall-clock, 128 cores) before the node's 513 GB RAM was exhausted.
+
+![COM trajectory](trajectory.png)
+
+Final center of mass at crash: **(43.55, −35.58, 0.00)**
+
+### Glide angle
+
+Angle of COM trajectory below horizontal (arctan |Δy / Δx|):
+
+| Phase | t range | Glide angle |
+|-------|---------|-------------|
+| Early | 2–3 | 62.3° |
+| Mid | 10–12 | 27.5° |
+| Late | 19–21 | 17.0° |
+| Final (last 10%) | 20.6–22.9 | 14.0° |
+| Overall avg | 2–22.9 | 32.6° |
+
+The glide angle is still decreasing at crash time — steady state not reached.
+
+**Next step:** restart from last checkpoint with a memory-reduced configuration (e.g. reduce base grid resolution or increase MPI ranks to distribute memory).
+
 ## Regenerate
 
 ```bash
