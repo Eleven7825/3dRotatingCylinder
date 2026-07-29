@@ -98,14 +98,14 @@ START_TIME           =   0.0e0     // initial simulation time
 END_TIME             =   30.0e0    // final simulation time
 GROW_DT              =   2.0e0     // growth factor for timesteps
 MAX_INTEGRATOR_STEPS =   10000000000  // max number of simulation timesteps
-REGRID_INTERVAL      =  10 
+REGRID_INTERVAL      =  11 
 CFL_MAX              =   0.3   
 NUM_INS_CYCLES       =   1
 CONVECTIVE_OP_TYPE   = "PPM"                      // convective differencing discretization type
 CONVECTIVE_FORM      = "ADVECTIVE"                // how to compute the convective terms
 NORMALIZE_PRESSURE   = FALSE     
 VORTICITY_TAGGING    = TRUE                       // whether to tag cells for refinement based on vorticity thresholds
-TAG_BUFFER           = 4                          // size of tag buffer used by grid generation algorithm
+TAG_BUFFER           = 2                          // size of tag buffer used by grid generation algorithm
 REGRID_CFL_INTERVAL  = 0.3                        // regrid whenever any material point could have moved 0.5 meshwidths since previous regrid
 DT_MAX               = 0.0005
 NUM_CYCLES           = 1
@@ -310,7 +310,7 @@ Main {
    visit_number_procs_per_file = 1
 
 // restart dump parameters
-   restart_interval      = 0                 // zero to turn off
+   restart_interval      = 5000                 // zero to turn off
    restart_write_dirname = "restart_IB3d"
 
 // hierarchy data dump parameters
