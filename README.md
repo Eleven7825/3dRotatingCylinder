@@ -120,7 +120,8 @@ Open `viz_cylinder3d/` in [VisIt](https://visit-dav.github.io/visit-website/):
    ```
    /scratch/sc7825/software/visit/bin/visit
    ```
-3. In the VisIt GUI, go to **File -> Restore Session...**, browse to the run's `viz_cylinder3d` directory, and click the `.session` file to load it.
+3. In the VisIt GUI, first add the source database: **File -> Open**, navigate to the run's *parent* directory (one level above `viz_cylinder3d`), and open `dumps.visit`.
+4. Then go to **File -> Restore Session...**, browse to the run's `viz_cylinder3d` directory, and select the `.session` file to resume the session.
 
 #### Test example
 
