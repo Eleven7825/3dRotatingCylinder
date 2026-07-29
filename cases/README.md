@@ -36,6 +36,23 @@ python3 tools/generate_vertex.py cases/my-new-case
 python3 setup_run.py my-new-case
 ```
 
+## Trajectory comparison
+
+All cases with simulation output, plotted on a shared coordinate frame.
+Red dashed box = computational domain (x ∈ [−30, 120], y ∈ [−120, 30]).
+Purple dotted box = 100 × 45 reference domain (x ∈ [−20, 80], y ∈ [−27, 18]).
+
+![Trajectory comparison](trajectory_comparison.png)
+
+| Case | Status | t end | Final COM (x, y) |
+|------|--------|-------|-----------------|
+| `faster_nofin` | domain exit | 21.5 | (63.9, −67.5) |
+| `faster_nofin_large` | complete | 30 | (92.9, −92.8) |
+| `faster_nofin_full_span` | OOM | 22.9 | (43.5, −35.6) |
+| `faster_3fin` | running | ~29.5 | (68.1, −28.3) |
+| `faster_2fin` | crash | 2.3 | (2.5, −10.4) |
+| `faster_midfin` | crash | 2.2 | (−0.9, −10.8) |
+
 ## Existing cases
 
 Each case has its own `README.md` with the full setup; the summary:
