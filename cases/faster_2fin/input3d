@@ -121,8 +121,10 @@ IBHierarchyIntegrator {
    end_time              = END_TIME              // final simulation time
    grow_dt               = GROW_DT               // growth factor for timesteps
    max_integrator_steps  = MAX_INTEGRATOR_STEPS   // max number of simulation timesteps
-   regrid_interval       = REGRID_INTERVAL
-   
+   // CFL-based regrid: triggers when accumulated fluid CFL >= 0.09 (≈11 steps at peak u)
+   // replaces fixed regrid_interval; avoids deterministic crash at specific step numbers
+   regrid_cfl_interval   = 0.09
+
    dt_max         = DT_MAX
    num_cycles     = NUM_INS_CYCLES
    delta_fcn      = DELTA_FUNCTION
@@ -333,7 +335,9 @@ CartesianGeometry {
 
 GriddingAlgorithm {
    allow_patches_smaller_than_minimum_size_to_prevent_overlaps = TRUE
-   coalesce_boxes = TRUE
+   coalesce_boxes = FALSE    // do not merge adjacent boxes; prevents wide fin patch
+                             // from being coalesced with narrow shaft patches in z,
+                             // which was creating composite boxes that missed IB points
 
    max_levels = MAX_LEVELS           // Maximum number of levels in hierarchy.
    ratio_to_coarser {
@@ -354,9 +358,11 @@ GriddingAlgorithm {
                            // all finer levels will use same values as level_0...
    }
 
-   efficiency_tolerance   = 0.85e0    // min % of tag cells in new patch level
-   combine_efficiency     = 0.85e0    // chop box if sum of volumes of smaller
+   efficiency_tolerance   = 0.70e0    // min % of tag cells in new patch level
+   combine_efficiency     = 0.70e0    // chop box if sum of volumes of smaller
                                       // boxes < efficiency * vol of large box
+                                      // lowered from 0.85 → more, smaller boxes near
+                                      // the fin-shaft z transition
 }
 
 StandardTagAndInitialize {
