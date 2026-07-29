@@ -61,12 +61,10 @@ Runs `cmake` + `make` inside the container. Binary lands at `build/main3d`.
 > export IBAMR_SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder
 > ```
 >
-> Then copy the built artifacts there the first time (or after a rebuild):
+> Then deploy the built artifacts there the first time (or after a rebuild), from a login node:
 >
 > ```bash
-> mkdir -p $IBAMR_SCRATCH_DIR/{singularity,build,runs}
-> cp singularity/ibamr.sif  $IBAMR_SCRATCH_DIR/singularity/
-> cp build/main3d            $IBAMR_SCRATCH_DIR/build/
+> ./sync-archive-scratch.sh push
 > ```
 
 Runs are defined by **cases**. List them by running with no arguments:
@@ -132,6 +130,23 @@ To try it with an existing run, restore this session file:
 ```
 
 Note: the session's database paths are relative to the run's *parent* directory (one level above `viz_cylinder3d`), so if VisIt reports it can't find `dumps.visit`, `cd` into `faster_3fin_2026-07-27_00-38-02` before launching `visit`, or set that as VisIt's working/browse directory before restoring the session.
+
+---
+
+## Syncing archive <-> scratch
+
+`/scratch` is where jobs run and is **purged after 60 days of inactivity**; `/archive`
+(this repo) is not. Since compute nodes can't reach `/archive`, use
+`sync-archive-scratch.sh` from a **login node** to move data between the two:
+
+```bash
+./sync-archive-scratch.sh push   # archive -> scratch: deploy build/main3d + singularity/ibamr.sif before running jobs
+./sync-archive-scratch.sh pull   # scratch -> archive: back up runs/ so results survive the purge
+```
+
+Add `--dry-run` to preview either direction before it copies anything. Run `pull`
+periodically (e.g. after a batch of runs finishes) so completed results aren't
+left exposed to the purge on `/scratch`.
 
 ---
 
