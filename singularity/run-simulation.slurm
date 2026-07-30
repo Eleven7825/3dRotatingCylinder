@@ -4,7 +4,9 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=128
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=256G
+#SBATCH --mem=450G
+# Node RealMemory is ~513G; the coalesce_boxes=FALSE regrid fix (more, smaller
+# AMR patches) pushed midfin/2fin past the old 256G cap (OOM at 256.00/256.00GB).
 #SBATCH --time=72:00:00
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
