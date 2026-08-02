@@ -173,15 +173,24 @@ bash singularity/run-IBAMR-torch.bash
 
 ## Restarting a simulation
 
-> **Note:** restart functionality has not been tested yet.
-
-Pass the restart directory and step number as extra arguments:
+IBAMR checkpoints land in a run's `restart_IB3d/restore.<step>/` folder every
+`REGRID_INTERVAL` steps. Pick the step you want to resume from and pass the
+restart directory and step number as extra arguments to `run-simulation.slurm`.
+Same env vars as a normal submission (`setup_run.py` sets these for you; do it
+by hand for a restart):
 
 ```bash
-sbatch --chdir=<run-folder> \
-       --export=ALL,IBAMR_PROJECT_DIR=$(pwd),IBAMR_SIF=singularity/ibamr.sif,IBAMR_EXECUTABLE=build/main3d \
-       singularity/run-simulation.slurm input3d restart_IB3d <step>
+RUN_DIR=/scratch/$USER/3dRotatingCylinder/runs/<case>_<stamp>
+PROJECT_DIR=/archive/$USER/3dRotatingCylinder
+SCRATCH_DIR=/scratch/$USER/3dRotatingCylinder
+
+sbatch --chdir="$RUN_DIR" \
+       --export=ALL,IBAMR_PROJECT_DIR=$PROJECT_DIR,IBAMR_SCRATCH_DIR=$SCRATCH_DIR,\
+IBAMR_SIF=$SCRATCH_DIR/singularity/ibamr.sif,IBAMR_EXECUTABLE=$SCRATCH_DIR/build/main3d \
+       "$PROJECT_DIR/singularity/run-simulation.slurm" input3d restart_IB3d <step>
 ```
+
+`<step>` matches a `restore.<step>` folder, e.g. `restart_IB3d/restore.005000` -> `<step>=5000`.
 
 ---
 
