@@ -50,8 +50,8 @@ Purple dotted box = 100 × 45 reference domain (x ∈ [−20, 80], y ∈ [−27,
 | `faster_nofin_large` | complete | 30 | (92.9, −92.8) |
 | `faster_nofin_full_span` | OOM, resubmitted with fixed mem budget (job 15150516, pending) | 22.9 | (43.5, −35.6) |
 | `faster_3fin` | complete | 30 | (69.3, −28.4) |
-| `faster_2fin` | running (fixed regrid+mem, no longer crashing) | ~19.7 | (41.4, −30.8) |
-| `faster_midfin` | running (fixed regrid+mem, no longer crashing) | ~24.0 | (46.9, −35.3) |
+| `faster_2fin` | TIMEOUT at 72h wall limit (fixed regrid+mem, no longer crashing) | 25.2 | (53.3, −32.7) |
+| `faster_midfin` | complete | 30 | (58.7, −37.2) |
 
 ## Existing cases
 
