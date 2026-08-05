@@ -48,10 +48,15 @@ Purple dotted box = 100 × 45 reference domain (x ∈ [−20, 80], y ∈ [−27,
 |------|--------|-------|-----------------|
 | `faster_nofin` | domain exit | 21.5 | (63.9, −67.5) |
 | `faster_nofin_large` | complete | 30 | (92.9, −92.8) |
-| `faster_nofin_full_span` | running, fresh restart w/ checkpointing enabled, target t=60 (job 15237531) | 5.2 | (8.7, −18.8) |
-| `faster_3fin` | running, fresh restart w/ checkpointing enabled, target t=60 (job 15237530) | 27.2 | (62.9, −28.1) |
-| `faster_2fin` | running, resumed from restore.050000, target t=60 (job 15237476) | 36.1 | (77.1, −34.2) |
-| `faster_midfin` | running, resumed from restore.061683, target t=60 (job 15237475) | 44.6 | (87.7, −38.5) |
+| `faster_nofin_full_span` | plotted run is the old OOM'd attempt; fresh restart in progress (job 15237531, checkpointing now on, target t=60) hasn't yet passed it | 22.9 | (43.5, −35.6) |
+| `faster_3fin` | plotted run is the old completed attempt; fresh restart in progress (job 15237530, checkpointing now on, target t=60) hasn't yet passed it | 30.0 | (69.3, −28.4) |
+| `faster_2fin` | running, resumed in-place from restore.050000, continuous trajectory shown, target t=60 (job 15237476) | 36.2 | (77.3, −34.2) |
+| `faster_midfin` | running, resumed in-place from restore.061683, continuous trajectory shown, target t=60 (job 15237475) | 44.8 | (88.0, −38.5) |
+
+Plot picks, per case, whichever run reached furthest: a same-folder restart
+(resumed from checkpoint) is stitched onto its earlier data as one continuous
+line; a fresh restart in a new run folder only replaces the old line once its
+own reach exceeds it.
 
 ## Existing cases
 

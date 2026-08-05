@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
-"""Regenerate cases/trajectory_comparison.png from the latest run of each case.
+"""Regenerate cases/trajectory_comparison.png from the best run of each case.
 
     module load anaconda3/2025.06
     python3 tools/plot_trajectories.py
 
-For each case under cases/, finds the most recent runs/<case>_<stamp>/ folder
-that has produced output and plots its center_of_mass trajectory. Must run on
-a login node (reads from /archive) with IBAMR_SCRATCH_DIR set if runs/ isn't
-under PROJECT_DIR/runs (see README "Torch note").
+For each case under cases/, considers every runs/<case>_<stamp>/ folder that
+has produced output. Within a folder, multiple job .out files (a checkpoint
+restart resubmitted into the same run folder) are stitched into one
+continuous trajectory, trimming the old file's tail past the point where the
+restart's data picks back up. Across folders (a fresh restart staged into a
+new, separate run folder, starting again from t=0) the folder whose stitched
+trajectory reaches the furthest simulation time wins — a fresh run only
+replaces an older one if it actually got further.
+
+Must run on a login node (reads from /archive) with IBAMR_SCRATCH_DIR set if
+runs/ isn't under PROJECT_DIR/runs (see README "Torch note").
 """
 
 import argparse
@@ -41,24 +48,51 @@ def list_cases():
                   if d.is_dir() and (d / "input3d").exists())
 
 
-def latest_run_with_output(case):
-    """Most recent runs/<case>_<stamp>/ that has a non-empty .out file."""
+def case_run_dirs(case):
+    """All runs/<case>_<stamp>/ folders for this case, oldest first."""
     pattern = re.compile(rf"^{re.escape(case)}_\d{{4}}-\d{{2}}-\d{{2}}_\d{{2}}-\d{{2}}-\d{{2}}$")
     if not RUNS_DIR.is_dir():
-        return None
-    candidates = sorted(
+        return []
+    return sorted(
         (d for d in RUNS_DIR.iterdir() if d.is_dir() and pattern.match(d.name)),
-        key=lambda d: d.name, reverse=True,
+        key=lambda d: d.name,
     )
-    for run_dir in candidates:
-        # A restarted run folder can hold .out files from multiple job IDs
-        # (original + resubmissions); take the most recently modified
-        # non-empty one, not just the first alphabetically.
-        out_files = [f for f in run_dir.glob("ibamr-rotating-cylinder-*.out")
-                     if f.stat().st_size > 0]
-        if out_files:
-            return max(out_files, key=lambda f: f.stat().st_mtime)
-    return None
+
+
+def folder_trajectory(run_dir, stride=20):
+    """Stitch every job .out file in a run folder into one continuous
+    trajectory, ordered by mtime (submission order). Where a later file's
+    data overlaps the end of an earlier one (a restart resumes from a
+    checkpoint that predates the earlier job's last logged point), the
+    earlier file's overlapping tail is dropped in favor of the restart."""
+    out_files = sorted(
+        (f for f in run_dir.glob("ibamr-rotating-cylinder-*.out") if f.stat().st_size > 0),
+        key=lambda f: f.stat().st_mtime,
+    )
+    ts, xs, ys = [], [], []
+    for out_file in out_files:
+        nts, nxs, nys = extract_trajectory(out_file, stride=stride)
+        if not nts:
+            continue
+        if ts:
+            cutoff = nts[0]
+            while ts and ts[-1] >= cutoff:
+                ts.pop(); xs.pop(); ys.pop()
+        ts.extend(nts); xs.extend(nxs); ys.extend(nys)
+    return (ts, xs, ys) if ts else None
+
+
+def best_trajectory_for_case(case, stride=20):
+    """Best (furthest-reaching) stitched trajectory across all of a case's
+    run folders. Returns (run_dir, (ts, xs, ys)) or (None, None)."""
+    best_dir, best_traj = None, None
+    for run_dir in case_run_dirs(case):
+        traj = folder_trajectory(run_dir, stride=stride)
+        if traj is None:
+            continue
+        if best_traj is None or traj[0][-1] > best_traj[0][-1]:
+            best_dir, best_traj = run_dir, traj
+    return best_dir, best_traj
 
 
 def extract_trajectory(path, stride=20):
@@ -95,16 +129,13 @@ def main():
     cases = list_cases()
     data = {}
     for case in cases:
-        out_file = latest_run_with_output(case)
-        if out_file is None:
+        run_dir, traj = best_trajectory_for_case(case, stride=args.stride)
+        if traj is None:
             print(f"{case}: no run output found, skipping")
             continue
-        ts, xs, ys = extract_trajectory(out_file, stride=args.stride)
-        if not ts:
-            print(f"{case}: {out_file} has no COM data yet, skipping")
-            continue
-        data[case] = (ts, xs, ys)
-        print(f"{case}: {out_file.parent.name} — {len(ts)} points, "
+        ts, xs, ys = traj
+        data[case] = traj
+        print(f"{case}: {run_dir.name} — {len(ts)} points, "
               f"t_end={ts[-1]:.4g}, final=({xs[-1]:.4g},{ys[-1]:.4g})")
 
     fig, ax = plt.subplots(figsize=(10, 8))
