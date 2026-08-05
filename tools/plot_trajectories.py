@@ -51,9 +51,13 @@ def latest_run_with_output(case):
         key=lambda d: d.name, reverse=True,
     )
     for run_dir in candidates:
-        for out_file in sorted(run_dir.glob("ibamr-rotating-cylinder-*.out")):
-            if out_file.stat().st_size > 0:
-                return out_file
+        # A restarted run folder can hold .out files from multiple job IDs
+        # (original + resubmissions); take the most recently modified
+        # non-empty one, not just the first alphabetically.
+        out_files = [f for f in run_dir.glob("ibamr-rotating-cylinder-*.out")
+                     if f.stat().st_size > 0]
+        if out_files:
+            return max(out_files, key=lambda f: f.stat().st_mtime)
     return None
 
 

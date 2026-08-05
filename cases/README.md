@@ -48,10 +48,10 @@ Purple dotted box = 100 × 45 reference domain (x ∈ [−20, 80], y ∈ [−27,
 |------|--------|-------|-----------------|
 | `faster_nofin` | domain exit | 21.5 | (63.9, −67.5) |
 | `faster_nofin_large` | complete | 30 | (92.9, −92.8) |
-| `faster_nofin_full_span` | OOM, resubmitted with fixed mem budget (job 15150516, pending) | 22.9 | (43.5, −35.6) |
-| `faster_3fin` | complete | 30 | (69.3, −28.4) |
-| `faster_2fin` | TIMEOUT at 72h wall limit (fixed regrid+mem, no longer crashing) | 25.2 | (53.3, −32.7) |
-| `faster_midfin` | complete | 30 | (58.7, −37.2) |
+| `faster_nofin_full_span` | running, fresh restart w/ checkpointing enabled, target t=60 (job 15237531) | 5.2 | (8.7, −18.8) |
+| `faster_3fin` | running, fresh restart w/ checkpointing enabled, target t=60 (job 15237530) | 27.2 | (62.9, −28.1) |
+| `faster_2fin` | running, resumed from restore.050000, target t=60 (job 15237476) | 36.1 | (77.1, −34.2) |
+| `faster_midfin` | running, resumed from restore.061683, target t=60 (job 15237475) | 44.6 | (87.7, −38.5) |
 
 ## Existing cases
 
