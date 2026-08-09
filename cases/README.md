@@ -48,10 +48,16 @@ Purple dotted box = 100 × 45 reference domain (x ∈ [−20, 80], y ∈ [−27,
 |------|--------|-------|-----------------|
 | `faster_nofin` | domain exit | 21.5 | (63.9, −67.5) |
 | `faster_nofin_large` | complete | 30 | (92.9, −92.8) |
-| `faster_nofin_full_span` | running, fresh restart (checkpointing now on) has passed its old OOM point, target t=60 (job 15237531) | 29.5 | (56.3, −37.9) |
-| `faster_3fin` | running, fresh restart (checkpointing now on) has passed its old completed run, target t=60 (job 15237530) | 48.2 | (110.6, −24.6) |
-| `faster_2fin` | running, resumed in-place from restore.050000, continuous trajectory shown, target t=60 (job 15237476) | 44.7 | (96.0, −33.0) |
-| `faster_midfin` | running, resumed in-place from restore.061683, continuous trajectory shown, target t=60 (job 15237475) | 54.6 | (107.6, −35.0) |
+| `faster_nofin_full_span` | complete | 60 | (112.5, −31.5) |
+| `faster_3fin` | CRASHED — `LEInteractor::spread` insufficient ghost cells near physical boundary (job 15237530) | 49.0 | (112.3, −23.7) |
+| `faster_2fin` | TIMEOUT at 72h wall limit again (job 15237476) | 51.5 | (110.7, −29.4) |
+| `faster_midfin` | CRASHED — same ghost-cell error as `faster_3fin` (job 15237475) | 57.2 | (112.6, −31.8) |
+
+The two crashes and the still-timing-out `faster_2fin` all stall around
+x ≈ 110–113, close to the domain's x_max = 120 — the body is drifting near
+the physical boundary and the ghost-cell width becomes insufficient for the
+IB kernel there. Likely needs a wider ghost-cell width or an earlier stop
+before investigating further, not just more wall time.
 
 Plot picks, per case, whichever run reached furthest: a same-folder restart
 (resumed from checkpoint) is stitched onto its earlier data as one continuous
